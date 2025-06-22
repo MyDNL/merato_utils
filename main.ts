@@ -1,4 +1,5 @@
 import { type EnvConfig, loadEnvironment } from "./mod.ts";
+import { handleError } from "./mod.ts";
 
 // Default environment variables
 const DEFAULT_ENV: EnvConfig = {
@@ -9,3 +10,10 @@ const DEFAULT_ENV: EnvConfig = {
 };
 
 loadEnvironment(DEFAULT_ENV);
+
+try {
+  throw new Error("Invalid input");
+} catch (error) {
+  const message = handleError(error); // Returns "Invalid input"
+  console.log(message);
+}

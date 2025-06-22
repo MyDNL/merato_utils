@@ -4,6 +4,7 @@
   "license": "MIT",
   "exports": {
     ".": "./mod.ts",
-    "./env": "./src/env.ts"
+    "./env": "./src/env.ts",
+    "./error": "./src/error.ts"
   }
 }
