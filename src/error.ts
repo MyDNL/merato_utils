@@ -1,18 +1,29 @@
-export function handleError(error: unknown): string {
-  let errorMessage = "An unexpected error occurred";
+export function handleError(error: unknown, context?: string): string {
+  let message = context ? `${context}: ` : "";
+  const defaultMessage = "An unexpected error occurred";
 
   if (error instanceof AggregateError) {
-    errorMessage = error.errors
-      .map((err) => (err instanceof Error ? err.message : String(err)))
-      .filter((msg) => msg)
-      .join("; ") || "Multiple errors occurred";
-  } else if (error instanceof Error) {
-    errorMessage = error.message || errorMessage;
-  } else if (typeof error === "string") {
-    errorMessage = error || errorMessage;
-  } else {
-    errorMessage = String(error) || errorMessage;
+    const messages = error.errors
+      .map((err) => {
+        if (err instanceof Error) {
+          console.error(`[${context || "Error"}]:`, err.stack); // Log stack for debugging
+          return err.message;
+        }
+        return String(err);
+      })
+      .filter(Boolean)
+      .join("; ");
+    return message + (messages || "Multiple errors occurred");
   }
 
-  return errorMessage;
+  if (error instanceof Error) {
+    console.error(`[${context || "Error"}]:`, error.stack); // Log stack for debugging
+    return message + (error.message || defaultMessage);
+  }
+
+  if (typeof error === "string") {
+    return message + (error || defaultMessage);
+  }
+
+  return message + (String(error) || defaultMessage);
 }
